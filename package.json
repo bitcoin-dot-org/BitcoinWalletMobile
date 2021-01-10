@@ -12,7 +12,6 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
-    "@keep-network/electrum-client-js": "https://github.com/keep-network/electrum-client-js",
     "@react-native-community/async-storage": "^1.12.1",
     "@react-native-community/checkbox": "^0.5.6",
     "@react-native-community/clipboard": "^1.5.1",
