@@ -1,6 +1,6 @@
 ## Bitcoin Wallet
 
-![](https://i.imgur.com/rAez0Zf.png "Screenshot")
+![](https://i.imgur.com/PQLyCN2.png "Screenshot")
 
 ## Goals
 Bitcoin Wallet is a mobile wallet meant for new users to get started using Bitcoin.
