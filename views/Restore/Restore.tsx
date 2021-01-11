@@ -53,6 +53,10 @@ const Restore: React.FC<Props> = (props) => {
 
         Keyboard.dismiss()
 
+        if(!isValid) {
+            return
+        }
+
         try {
             // Store the seed in the keychain
             await RNSecureKeyStore.set("WALLET_SEED", words.join(" ").toLowerCase(), { accessible: ACCESSIBLE.ALWAYS_THIS_DEVICE_ONLY })
