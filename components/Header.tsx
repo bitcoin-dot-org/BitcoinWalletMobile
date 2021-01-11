@@ -40,7 +40,7 @@ const Header: React.FC<Props> = (props) => {
                                 <Text style={styles.headingText}>{props.screen}</Text>
                             </View>
                         </TouchableOpacity>
-                        {props.screen == getTranslated(language).create_new || props.screen == getTranslated(language).seed_phrase &&
+                        {(props.screen == getTranslated(language).create_new || props.screen == getTranslated(language).seed_phrase) &&
                             <View style={styles.stepContain}>
                                 <Text style={styles.stepText}>Step </Text>
                                 <Text style={styles.stepHightlight}>{props.screen == getTranslated(language).seed_phrase ? "2" : "1"}</Text><Text style={styles.stepText}>/2</Text>

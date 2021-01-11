@@ -51,7 +51,7 @@ const CreateStepOne: React.FC<Props> = (props) => {
     return (
         <View style={{ flex: 1 }}>
             { isGenerating &&
-                <Loader title="Generating recovery words..." subTitle="This might take a second" />
+                <Loader title="Generating..." subTitle="This might take a second" />
             }
             { !isGenerating &&
                 <View style={{ flex: 1 }}>

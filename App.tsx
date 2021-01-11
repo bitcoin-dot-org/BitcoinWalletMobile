@@ -13,7 +13,7 @@ import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Provider } from 'react-redux'
 import {store, persistor } from './store/WalletStateStore'
 import { PersistGate } from 'redux-persist/integration/react'
@@ -25,11 +25,16 @@ import PickerView from './components/Settings/PickerView'
 import ScanQRCode from './components/ScanQRCode'
 import Send from './components/Send'
 import { StatusBar, View } from 'react-native';
+import SplashScreen from 'react-native-splash-screen'
 
 const Stack = createStackNavigator<RootNavigationParamList>();
 
 
 const App = () => {
+
+  useEffect(() => {
+    SplashScreen.hide()
+  }, [])
 
   return (
     <Provider store={store}>

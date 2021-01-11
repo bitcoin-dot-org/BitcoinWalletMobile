@@ -1,6 +1,6 @@
-import React, { createRef, useState } from 'react'
+import React, { createRef, useEffect, useState } from 'react'
 import { View, Text, TextInput, Keyboard } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScaledSheet } from 'react-native-size-matters';
 import ButtonPrimary from '../../buttons/ButtonPrimary';
@@ -10,7 +10,9 @@ import { isRestoring, WalletState } from '../../store/WalletStateStore'
 import RNSecureKeyStore, { ACCESSIBLE } from "react-native-secure-key-store";
 import { StackScreenProps } from '@react-navigation/stack';
 import Header from '../../components/Header'
+import * as bip39 from "bip39";
 import { getTranslated } from '../../lang/helper';
+import ButtonPrimaryDisabled from '../../buttons/ButtonPrimaryDisabled';
 
 type Props = StackScreenProps<RootNavigationParamList, 'Restore'>;
 
@@ -18,6 +20,7 @@ const Restore: React.FC<Props> = (props) => {
 
     const insets = useSafeAreaInsets()
 
+    const [isValid, setIsValid] = useState(false)
     const [words, setWords] = useState(["", "", "", "", "", "", "", "", "", "", "", ""])
 
     const refs = [createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>()]
@@ -40,6 +43,10 @@ const Restore: React.FC<Props> = (props) => {
     const dispatch = useDispatch()
     const languageSelector = (state: WalletState) => state.language
     const language = useSelector(languageSelector)
+
+    useEffect(() => {
+        setIsValid(bip39.validateMnemonic(words.join(" ").toLowerCase()))
+    }, [words])
 
 
     const restoreWallet = async () => {
@@ -94,7 +101,14 @@ const Restore: React.FC<Props> = (props) => {
                                 }
                             </View>
                             <View style={{ marginBottom: insets.bottom + 30, marginLeft: 16 }}>
-                                <ButtonPrimary text={getTranslated(language).restore_button} action={restoreWallet} />
+
+                                {!isValid &&
+                                    <ButtonPrimaryDisabled text={getTranslated(language).restore_button} action={restoreWallet} />
+                                }
+                                {isValid &&
+                                    <ButtonPrimary text={getTranslated(language).restore_button} action={restoreWallet} />
+                                }
+
                             </View>
                         </ScrollView>
                     </View>

@@ -202,6 +202,8 @@ PODS:
     - React-Core
   - react-native-safe-area-context (3.1.9):
     - React-Core
+  - react-native-splash-screen (3.2.0):
+    - React
   - react-native-tcp-socket (3.7.1):
     - CocoaAsyncSocket
     - React
@@ -312,6 +314,7 @@ DEPENDENCIES:
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-tcp-socket (from `../node_modules/react-native-tcp-socket`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -382,6 +385,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-randombytes"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-splash-screen:
+    :path: "../node_modules/react-native-splash-screen"
   react-native-tcp-socket:
     :path: "../node_modules/react-native-tcp-socket"
   React-RCTActionSheet:
@@ -452,6 +457,7 @@ SPEC CHECKSUMS:
   react-native-camera: 35854c4f764a4a6cf61c1c3525888b92f0fe4b31
   react-native-randombytes: b6677f7d495c27e9ee0dbd77ebc97b3c59173729
   react-native-safe-area-context: b6e0e284002381d2ff29fa4fff42b4d8282e3c94
+  react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-tcp-socket: 96a4f104cdcc9c6621aafe92937f163d88447c5b
   React-RCTActionSheet: 53ea72699698b0b47a6421cb1c8b4ab215a774aa
   React-RCTAnimation: 1befece0b5183c22ae01b966f5583f42e69a83c2
