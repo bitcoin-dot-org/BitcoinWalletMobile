@@ -191,6 +191,7 @@ const Send: React.FC<Props> = (props) => {
 
     const qrCodeCallback = (scannedAddress: string, scannedAmount: string | null) => {
         setAddress(scannedAddress)
+        setAddressInvalid(false)
 
         if (scannedAmount != null) {
             setBtcAmount(scannedAmount.toString())
