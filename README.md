@@ -38,7 +38,7 @@ yarn postinstall
 
 ## Install pods (for iOS)
 ```
-npx pod-install ios
+npx pod-install
 ```
 
 ## Running on iOS
