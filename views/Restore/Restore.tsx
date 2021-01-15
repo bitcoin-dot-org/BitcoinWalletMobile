@@ -21,11 +21,17 @@ const Restore: React.FC<Props> = (props) => {
     const insets = useSafeAreaInsets()
 
     const [isValid, setIsValid] = useState(false)
+    const [fieldsWithError, setFieldsWithError] = useState([-1])
     const [words, setWords] = useState(["", "", "", "", "", "", "", "", "", "", "", ""])
 
     const refs = [createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>(), createRef<TextInput>()]
 
     const updateWord = (word: string, index: number) => {
+
+        if((index-1) >= 0) {
+            fixWord(index-1)
+        }
+
         let newWords = [...words]
 
         for (var i = 0; i < newWords.length; i++) {
@@ -33,10 +39,46 @@ const Restore: React.FC<Props> = (props) => {
                 newWords[i] = word
             }
         }
+
+        let errorFields = [...fieldsWithError]
+
+        if(bip39.wordlists.english.indexOf(word) == -1 && word != '') {
+            errorFields.push(index)
+        }
+        else {
+            if(fieldsWithError.indexOf(index) != -1) {
+                errorFields = fieldsWithError.filter((f) => f != index)
+            }
+        }
+        setFieldsWithError(errorFields)
+        setWords(newWords)
+    }
+
+    const fixWord = (index : number) => {
+
+        if (index < 0) {
+            return
+        }
+
+        let newWords = [...words]
+        newWords[index] = words[index].trim().toLowerCase()
+
+        let errorFields = [...fieldsWithError]
+
+        if(bip39.wordlists.english.indexOf(newWords[index]) == -1 && words[index] != '') {
+            errorFields.push(index)
+        }
+        else {
+            if(fieldsWithError.indexOf(index) != -1) {
+                errorFields = fieldsWithError.filter((f) => f != index)
+            }
+        }
+        setFieldsWithError(errorFields)
         setWords(newWords)
     }
 
     const nextTextInput = (index: number) => {
+        fixWord(index-1)
         refs[index].current?.focus()
     }
 
@@ -45,7 +87,7 @@ const Restore: React.FC<Props> = (props) => {
     const language = useSelector(languageSelector)
 
     useEffect(() => {
-        setIsValid(bip39.validateMnemonic(words.join(" ").toLowerCase()))
+        setIsValid(bip39.validateMnemonic(words.join(" ")))
     }, [words])
 
 
@@ -58,7 +100,7 @@ const Restore: React.FC<Props> = (props) => {
         }
 
         try {
-            // Store the seed in the keychain
+            //Store the seed in the keychain
             await RNSecureKeyStore.set("WALLET_SEED", words.join(" ").toLowerCase(), { accessible: ACCESSIBLE.ALWAYS_THIS_DEVICE_ONLY })
 
             // State change to indicate we are restoring so the main wallet screen knows to do a full sync
@@ -88,13 +130,14 @@ const Restore: React.FC<Props> = (props) => {
                                         <View key={index} style={{ flexDirection: 'row', alignItems: 'center', width: '50%', flexWrap: 'wrap', marginTop: 10, }}>
                                             <Text style={styles.numberedLabel}>{index + 1}.</Text>
                                             <TextInput
-                                                style={styles.recoveryField}
+                                                style={[styles.recoveryField, fieldsWithError.filter((f) => f == index).length > 0 ? styles.recoveryErrorBorder : styles.recoveryNormalBorder]}
                                                 ref={refs[index]}
                                                 returnKeyType="next"
                                                 keyboardType="ascii-capable"
-                                                autoCapitalize="characters"
                                                 autoCorrect={false}
+                                                autoCapitalize="none"
                                                 value={word}
+                                                onBlur={() => { fixWord(index) }}
                                                 onChangeText={(text) => updateWord(text, index)}
                                                 onSubmitEditing={() => { index < 11 ? nextTextInput(index + 1) : restoreWallet() }}
                                                 blurOnSubmit={false}
@@ -137,14 +180,20 @@ const styles = ScaledSheet.create({
         width: 145,
         height: 40,
         backgroundColor: '#090C14',
-        borderWidth: 1,
-        borderColor: '#2B2F3A',
         color: '#FFF',
         fontFamily: 'TitilliumWeb-SemiBold',
         fontWeight: '600',
         fontSize: 16,
         lineHeight: 24,
         paddingHorizontal: 10,
+        borderWidth: 1,
+        borderRadius: 3,
+    },
+    recoveryNormalBorder: {
+        borderColor: '#2B2F3A',
+    },
+    recoveryErrorBorder: {
+        borderColor: 'red',
     },
     numberedLabel: {
         fontFamily: 'TitilliumWeb-Regular',

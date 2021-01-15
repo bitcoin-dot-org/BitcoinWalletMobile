@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, Image } from 'react-native'
 import { ScaledSheet } from 'react-native-size-matters';
 import { useDispatch, useSelector } from 'react-redux'
@@ -7,7 +7,7 @@ import Screen from '../../components/Screen'
 import ButtonPrimary from '../../buttons/ButtonPrimary'
 import { StackScreenProps } from '@react-navigation/stack';
 import CheckBox from '@react-native-community/checkbox';
-import RNSecureKeyStore, { ACCESSIBLE } from "react-native-secure-key-store";
+import RNSecureKeyStore from "react-native-secure-key-store";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import Header from '../../components/Header';
@@ -22,34 +22,25 @@ const CreateStepTwo: React.FC<Props> = (props) => {
     const dispatch = useDispatch()
     const languageSelector = (state: WalletState) => state.language
     const language = useSelector(languageSelector)
+    const [words, setWords] = useState([""])
 
     const [didWriteDown, setDidWriteDown] = useState(false)
 
     const insets = useSafeAreaInsets()
 
-
     const setUpWallet = async () => {
-
-
-
-        try {
-            // Store the seed in the keychain
-            await RNSecureKeyStore.set("WALLET_SEED", props.route.params.words.join(' '), { accessible: ACCESSIBLE.ALWAYS_THIS_DEVICE_ONLY })
-
-            dispatch(setNewlyCreated(true))
-
-            // Let's go back 
-            props.navigation.popToTop()
-        }
-
-        catch (error) {
-            console.log(error)
-            // Shouldn't end up here..?
-        }
-
-
+        dispatch(setNewlyCreated(true))
+        props.navigation.popToTop()
     }
 
+    const getSeed = async () => {
+        let s = await RNSecureKeyStore.get('WALLET_SEED')
+        setWords(s.split(' '))
+    } 
+
+    useEffect(() => {
+        getSeed()
+    }, [])
 
     return (
         <View style={styles.rootContainer}>
@@ -65,7 +56,7 @@ const CreateStepTwo: React.FC<Props> = (props) => {
                                         <Text style={styles.warningTextInner}><Text style={styles.warningText}>{getTranslated(language).warning}! </Text>{getTranslated(language).warning_text_2}</Text>
                                     </View>
                                 </View>
-                                <RecoveryWords screen="CreateStepTwo" words={props.route.params.words} />
+                                <RecoveryWords screen="CreateStepTwo" words={words} />
                                 <View style={{ marginBottom: insets.bottom + 30 }}>
                                     <View style={styles.hasSavedContainer}>
                                         <TouchableWithoutFeedback style={{ width: 32, height: 32 }} onPress={() => { setDidWriteDown(!didWriteDown) }}>

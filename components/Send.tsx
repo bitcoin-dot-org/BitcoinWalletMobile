@@ -78,10 +78,6 @@ const Send: React.FC<Props> = (props) => {
     const feeTitles = [getTranslated(language).low_priority, getTranslated(language).standard, getTranslated(language).important]
     const feeDescriptions = [getTranslated(language).low_priority_desc, getTranslated(language).standard_desc, getTranslated(language).important_desc]
 
-    useEffect(() => {
-        wallet.fetchFeeRates()
-    }, [])
-
     const btcToFiat = () => {
         let fiat = new BigNumber(balance).multipliedBy(rate).toFixed(2)
 
@@ -195,6 +191,7 @@ const Send: React.FC<Props> = (props) => {
 
         if (scannedAmount != null) {
             setBtcAmount(scannedAmount.toString())
+            setSendEnabled(true)
             checkValidAndCalculateFiat(scannedAmount.toString())
         }
     }
@@ -466,19 +463,21 @@ const Send: React.FC<Props> = (props) => {
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.subHeading}>{getTranslated(language).amount_to_send}</Text>
                                         <TouchableWithoutFeedback onPress={() => { btcTextRef.current?.focus() }}>
-                                            <View style={[{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }, styles.textInput, btcAmountInvalid ? styles.textErrorBorder : styles.textNormalBorder]}>
+                                            <View style={[{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }, styles.textInput, btcAmountInvalid ? styles.textErrorBorder : styles.textNormalBorder]}>
                                                 <TextInput ref={btcTextRef} style={styles.textInputText} placeholderTextColor="#7E858F" keyboardType="numeric" value={btcAmount} onChangeText={checkValidAndCalculateFiat} placeholder="0" />
                                                 <Text style={styles.currencyTextInput}>BTC</Text>
                                             </View>
                                         </TouchableWithoutFeedback>
                                     </View>
                                     <Image source={require('../assets/images/swap.png')} style={styles.swapIcon} />
+                                    <View style={{ flex: 1 }}>
                                     <TouchableWithoutFeedback onPress={() => { fiatTextRef.current?.focus() }}>
-                                        <View style={[{ flex: 1, marginTop: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }, styles.textInput, fiatAmountInvalid ? styles.textErrorBorder : styles.textNormalBorder]}>
+                                        <View style={[{ marginTop: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }, styles.textInput, fiatAmountInvalid ? styles.textErrorBorder : styles.textNormalBorder]}>
                                             <TextInput style={styles.textInputText} ref={fiatTextRef} placeholderTextColor="#7E858F" keyboardType="numeric" value={fiatAmount} onChangeText={checkValidAndCalculateBtc} placeholder="0" />
                                             <Text style={styles.currencyTextInput}>{currency}</Text>
                                         </View>
                                     </TouchableWithoutFeedback>
+                                    </View>
                                 </View>
                             </View>
                             <TouchableOpacity style={styles.sendMaxContainer} onPress={sendMax}>

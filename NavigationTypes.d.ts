@@ -1,7 +1,7 @@
 type RootNavigationParamList =  {
     Root: undefined
     CreateStepOne: undefined
-    CreateStepTwo: { words : string[] }
+    CreateStepTwo: undefined
     Restore: undefined
     PickerView: { type : "Choose Currency" | "Choose Language" };
     ScanQRCode: { callBack : (address : string, amount : string | null) => void }

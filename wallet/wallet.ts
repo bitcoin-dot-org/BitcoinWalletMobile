@@ -23,6 +23,7 @@ export class Wallet {
     shouldFetchUtxos = false
     internalAddressesToFetchUtxosFor: AddressLookup[] = []
     externalAddressesToFetchUtxosFor: AddressLookup[] = []
+    isCreatingAddresses = false
 
     async setUpSeedAndRoot() {
         try {
@@ -81,6 +82,30 @@ export class Wallet {
         }
         catch (e) {
             console.log(e)
+        }
+    }
+
+    async finishGeneratingAddresses() {
+
+        if((store.getState().externalAddresses.length<21 || store.getState().internalAddresses.length<21) && !this.isCreatingAddresses && store.getState().isActive) {
+
+            this.isCreatingAddresses = true
+
+            let externalSize = store.getState().externalAddresses.length
+            let internalSize = store.getState().internalAddresses.length
+
+            let externalAddress = await this.getExternalAddress(externalSize)
+            let internalAddress = await this.getInternalAddress(internalSize)
+
+            if((externalSize + 1) <= 21) {
+                store.dispatch(addExternalAddress(new AddressLookup(externalSize, externalAddress, 0, true)))
+            }
+
+            if((internalSize + 1) <= 21) {
+                store.dispatch(addInternalAddress(new AddressLookup(internalSize, internalAddress, 0, true)))
+            }
+
+            this.isCreatingAddresses = false
         }
     }
 
@@ -159,6 +184,10 @@ export class Wallet {
 
     async synchronize(smallSync: boolean) {
 
+        if(store.getState().isSyncing) {
+            return
+        }
+
         store.dispatch(isSyncing())
 
         try {
@@ -207,6 +236,7 @@ export class Wallet {
             }
 
 
+            await wallet.finishGeneratingAddresses()
             await this.processAddresses(externalAddresses, internalAddresses)
 
             // We need to fetch the utxos
@@ -227,9 +257,7 @@ export class Wallet {
                 store.dispatch(isRestoring(false))
             }
 
-            if (store.getState().newlyCreated) {
-                store.dispatch(setNewlyCreated(false))
-            }
+            await wallet.fetchFeeRates()
 
             store.dispatch(isDoneSyncing())
         }

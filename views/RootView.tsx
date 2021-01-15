@@ -4,7 +4,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import LinearGradient from 'react-native-linear-gradient'
 import Screen from '../components/Screen'
 import { getLanguageBigName, getTranslated } from '../lang/helper'
-import { addExternalAddress, addInternalAddress, setIsActive, WalletState } from '../store/WalletStateStore';
+import { addExternalAddress, addInternalAddress, setIsActive, setNewlyCreated, WalletState } from '../store/WalletStateStore';
 import { useDispatch, useSelector } from 'react-redux';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Overview from '../components/Overview'
@@ -12,6 +12,8 @@ import Receive from '../components/Receive'
 import Settings from '../components/Settings/Settings'
 import Header from '../components/Header'
 import { wallet } from '../wallet/wallet';
+import * as bip39 from "bip39";
+import RNSecureKeyStore, { ACCESSIBLE } from "react-native-secure-key-store";
 
 import { AddressLookup } from '../wallet/walletTypes';
 import Loader from '../components/Loader';
@@ -54,36 +56,48 @@ const RootView: React.FC<Props> = (props) => {
         let firstExternal = await wallet.getExternalAddress(0)
         dispatch(addExternalAddress(new AddressLookup(0, firstExternal, zeroOrMinusOne, false)))
 
-        // Now let's populate external address lookaheads
-        for (var i = 0; i < 20; i++) {
-            let external = await wallet.getExternalAddress(i + 1)
-            dispatch(addExternalAddress(new AddressLookup(i + 1, external, zeroOrMinusOne, true)))
+        // Now let's populate external address lookaheads, if we're restoring
+        if(isRestoringOldWallet) {
+            for (var i = 0; i < 20; i++) {
+                let external = await wallet.getExternalAddress(i + 1)
+                dispatch(addExternalAddress(new AddressLookup(i + 1, external, zeroOrMinusOne, true)))
+            }
         }
-
         // Populate first internal address
         let firstInternal = await wallet.getInternalAddress(0)
         dispatch(addInternalAddress(new AddressLookup(0, firstInternal, zeroOrMinusOne, false)))
 
-        // Now let's populate internal address lookaheads
-        for (var i = 0; i < 20; i++) {
-            let internal = await wallet.getInternalAddress(i + 1)
-            dispatch(addInternalAddress(new AddressLookup(i + 1, internal, zeroOrMinusOne, true)))
+        // Now let's populate internal address lookaheads, if we're restoring
+        if(isRestoringOldWallet) {
+            for (var i = 0; i < 20; i++) {
+                let internal = await wallet.getInternalAddress(i + 1)
+                dispatch(addInternalAddress(new AddressLookup(i + 1, internal, zeroOrMinusOne, true)))
+            }
         }
 
         dispatch(setIsActive(true))
+        dispatch(setNewlyCreated(false))
     }
 
     const sync = async () => {
         try {
-            await wallet.synchronize(!multiDevice)
-            await wallet.fetchFeeRates()
+             await wallet.synchronize(!multiDevice)
         }
         catch (e) {
             console.log(e)
         }
     }
 
+    const generateSeed = async () => {
+        let words = bip39.generateMnemonic()
+        await RNSecureKeyStore.set("WALLET_SEED", words, { accessible: ACCESSIBLE.ALWAYS_THIS_DEVICE_ONLY })
+    }
+
     const handleEffect = async () => {
+
+        if(!isActive && !isNewWallet && !isWalletRestoring) {
+            generateSeed()
+        }
 
         if (!isActive && isNewWallet) {
             setUpWallet(false)
@@ -94,7 +108,7 @@ const RootView: React.FC<Props> = (props) => {
         }
 
         if (isActive) {
-            await sync()
+             await sync()
         }
     }
 

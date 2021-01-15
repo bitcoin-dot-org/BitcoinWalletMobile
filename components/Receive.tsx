@@ -7,7 +7,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { wallet } from './../wallet/wallet'
 import { WalletState } from '../store/WalletStateStore';
 import { useSelector } from 'react-redux';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import Clipboard from '@react-native-community/clipboard';
 import Header from './Header';
 import { getTranslated } from '../lang/helper';
@@ -46,6 +46,7 @@ const Receive: React.FC = () => {
         <View style={styles.container}>
             <Header screen={getTranslated(language).receive} />
             <Screen>
+                <ScrollView>
                 <View>
                     <Text style={styles.subHeadingText}>{getTranslated(language).receive_only + " " + getTranslated(language).address_below}</Text>
                     <View style={styles.textArea}>
@@ -65,6 +66,7 @@ const Receive: React.FC = () => {
                         </View>
                     </LinearGradient>
                 </View>
+                </ScrollView>
             </Screen>
         </View>
     );

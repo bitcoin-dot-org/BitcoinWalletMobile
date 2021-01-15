@@ -6,7 +6,6 @@ import Screen from '../../components/Screen'
 import ButtonPrimary from '../../buttons/ButtonPrimary'
 import Header from '../../components/Header'
 import { StackScreenProps } from '@react-navigation/stack';
-import * as bip39 from "bip39";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScrollView } from 'react-native-gesture-handler';
 import Loader from '../../components/Loader';
@@ -28,9 +27,8 @@ const CreateStepOne: React.FC<Props> = (props) => {
         setIsGenerating(true)
 
         setTimeout(() => {
-            let words = bip39.generateMnemonic().split(" ")
             setIsGenerating(false)
-            props.navigation.navigate('CreateStepTwo', { words: words })
+            props.navigation.navigate('CreateStepTwo')
         }, 2000)
     }
 
@@ -51,7 +49,7 @@ const CreateStepOne: React.FC<Props> = (props) => {
     return (
         <View style={{ flex: 1 }}>
             { isGenerating &&
-                <Loader title="Generating..." subTitle="This might take a second" />
+                <Loader title="Hold on..." subTitle="This might take a second" />
             }
             { !isGenerating &&
                 <View style={{ flex: 1 }}>
@@ -81,7 +79,7 @@ const CreateStepOne: React.FC<Props> = (props) => {
                                         </View>
                                     </View>
                                     <View style={[styles.buttonContainer, { marginBottom: insets.bottom + 30 }]}>
-                                        {!isGenerating && <ButtonPrimary text={getTranslated(language).generate} action={() => generateSeed()} />}
+                                        {!isGenerating && <ButtonPrimary text={getTranslated(language).next_button} action={() => generateSeed()} />}
                                     </View>
                                 </ScrollView>
                             </View>

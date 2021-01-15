@@ -11,7 +11,7 @@
 import './shim';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import React, { useEffect } from 'react';
 import { Provider } from 'react-redux'
@@ -43,7 +43,7 @@ const App = () => {
           <NavigationContainer>
             <View style={{flex:1, backgroundColor:'#1A1E29'}}>
             <StatusBar backgroundColor="#090C14" barStyle="light-content"/>
-                <Stack.Navigator initialRouteName="Root" headerMode="none" >
+                <Stack.Navigator mode="card" screenOptions={{...TransitionPresets.SlideFromRightIOS}} initialRouteName="Root" headerMode="none" >
                   <Stack.Screen name="Root" component={RootView} />
                   <Stack.Screen name="CreateStepOne" component={CreateStepOne} />
                   <Stack.Screen name="CreateStepTwo" component={CreateStepTwo} />
