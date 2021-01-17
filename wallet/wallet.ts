@@ -175,9 +175,9 @@ export class Wallet {
     }
 
     async fetchFeeRates() {
-        const important = await this.client.blockchainEstimatefee(3)
-        const standard = await this.client.blockchainEstimatefee(6)
-        const low = await this.client.blockchainEstimatefee(9)
+        const important = await this.client.blockchainEstimatefee(6)
+        const standard = await this.client.blockchainEstimatefee(10)
+        const low = await this.client.blockchainEstimatefee(20)
         let feeRates = [Math.ceil(new BigNumber(low).multipliedBy(100000000).dividedBy(1000).toNumber()), Math.ceil(new BigNumber(standard).multipliedBy(100000000).dividedBy(1000).toNumber()), Math.ceil(new BigNumber(important).multipliedBy(100000000).dividedBy(1000).toNumber())]
         store.dispatch(setFeeRates(feeRates))
     }
@@ -454,7 +454,14 @@ export class Wallet {
                                     for (var l = 0; l < externalAddresses.length; l++) {
                                         if (externalAddresses[l].address == address) {
                                             if (transaction.confirmations >= 6) {
-                                                store.dispatch(updateExternalAddress(0, externalAddresses[l].address))
+                                                let satoshi = new BigNumber(inputTransaction.vout[k].value).multipliedBy(100000000)
+                                                let currentBalance = store.getState().externalAddresses.filter((a) => a.address == externalAddresses[l].address)[0].balance
+                                                let newBalance = new BigNumber(currentBalance).minus(satoshi).toNumber()
+                                                store.dispatch(updateExternalAddress(newBalance, externalAddresses[l].address))
+
+                                                if(newBalance == 0) {
+                                                    this.externalAddressesToFetchUtxosFor = this.externalAddressesToFetchUtxosFor.filter((a) => a.address != externalAddresses[l].address)
+                                                }
                                             }
                                         }
                                     }
@@ -495,17 +502,15 @@ export class Wallet {
                             // We got it
                             if (externalAddresses[l].address == address) {
 
-                                // Convert to satoshis
-                                let satoshi = new BigNumber(transaction.vout[j].value).multipliedBy(100000000)
-
-                                // Calculate the new balance
-                                let currentBalance = store.getState().externalAddresses.filter((a) => a.address == externalAddresses[l].address)[0].balance
-                                let newBalance = new BigNumber(currentBalance).plus(satoshi).toNumber()
-
                                 // Let's adjust our balance if we have 6 confs and add it to our addressesses to get UTXOs for
                                 if (transaction.confirmations >= 6) {
+                                    let satoshi = new BigNumber(transaction.vout[j].value).multipliedBy(100000000)
+                                    let currentBalance = store.getState().externalAddresses.filter((a) => a.address == externalAddresses[l].address)[0].balance
+                                    let newBalance = new BigNumber(currentBalance).plus(satoshi).toNumber()
                                     store.dispatch(updateExternalAddress(newBalance, externalAddresses[l].address))
-                                    this.externalAddressesToFetchUtxosFor.push(externalAddresses[l])
+                                    if(this.externalAddressesToFetchUtxosFor.filter((a) => a.address == externalAddresses[l].address).length == 0) {
+                                        this.externalAddressesToFetchUtxosFor.push(externalAddresses[l])
+                                    }
                                 }
 
                             }
@@ -525,8 +530,9 @@ export class Wallet {
                                 // Convert to satoshis which is the format of the balances
                                 let satoshi = new BigNumber(transaction.vout[j].value).multipliedBy(100000000)
 
-                                // We need to fetch the UTXO for this unspent change
-                                this.internalAddressesToFetchUtxosFor.push(internalAddresses[x])
+                                if(this.internalAddressesToFetchUtxosFor.filter((a) => a.address == internalAddresses[x].address).length == 0) {
+                                    this.internalAddressesToFetchUtxosFor.push(internalAddresses[x])
+                                }
 
                                 // Reduce the balance we have on record for this address by the amount spent only if the transaction has 6 confirmations
                                 if (transaction.confirmations >= 6) {
