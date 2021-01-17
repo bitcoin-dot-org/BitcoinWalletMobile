@@ -115,6 +115,10 @@ export class Wallet {
             await this.setUpSeedAndRoot()
         }
 
+        if(this.externalAddressesToFetchUtxosFor.length == 0 && this.internalAddressesToFetchUtxosFor.length == 0 ) {
+            return
+        }
+
         let request = await Axios.get('https://blockchain.info/latestblock?&cors=true')
 
         if (request.status == 200) {
