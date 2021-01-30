@@ -40,9 +40,9 @@ var zh = <Language> {
     settings: '设置',
     amount_to_send: '发送数量',
     not_enough_balance: '余额不足，无法发送该金额',
-    send_max: '发送最大',
+    send_max: '发送最大数额',
     amount: '数量',
-    miner_fee: '网络交易费',
+    miner_fee: '比特币网络交易费',
     total: '总共金额',
     confirmation: '确认',
     they_receive: '他们接收',
@@ -70,7 +70,7 @@ var zh = <Language> {
     complete: '完成',
 
     // Send
-    send_to: '只发送到比特币 (BTC) 地址',
+    send_to: '发送到的比特币 (BTC) 地址',
     bitcoin_address: '比特币地址',
     address: '地址',
     low_priority: '经济',
@@ -91,7 +91,7 @@ var zh = <Language> {
     // Settings
     show_seed: '恢复助记词',
     language: '语言',
-    currency: '货币',
+    currency: '法定货币',
     exit_wallet: '退出钱包',
 
     // Buttons
