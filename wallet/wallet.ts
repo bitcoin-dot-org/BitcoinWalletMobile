@@ -179,9 +179,9 @@ export class Wallet {
     }
 
     async fetchFeeRates() {
-        const important = await this.client.blockchainEstimatefee(6)
-        const standard = await this.client.blockchainEstimatefee(10)
-        const low = await this.client.blockchainEstimatefee(20)
+        const important = await this.client.blockchainEstimatefee(3)
+        const standard = await this.client.blockchainEstimatefee(48)
+        const low = await this.client.blockchainEstimatefee(144)
         let feeRates = [Math.ceil(new BigNumber(low).multipliedBy(100000000).dividedBy(1000).toNumber()), Math.ceil(new BigNumber(standard).multipliedBy(100000000).dividedBy(1000).toNumber()), Math.ceil(new BigNumber(important).multipliedBy(100000000).dividedBy(1000).toNumber())]
         store.dispatch(setFeeRates(feeRates))
     }
@@ -239,7 +239,6 @@ export class Wallet {
 
             }
 
-
             await wallet.finishGeneratingAddresses()
             await this.processAddresses(externalAddresses, internalAddresses)
 
@@ -263,12 +262,11 @@ export class Wallet {
 
             await wallet.fetchFeeRates()
 
-            store.dispatch(isDoneSyncing())
         }
 
-        catch {
-            store.dispatch(isDoneSyncing())
-        }
+        catch { }
+
+        store.dispatch(isDoneSyncing())
 
     }
 

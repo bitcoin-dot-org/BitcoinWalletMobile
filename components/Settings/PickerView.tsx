@@ -13,7 +13,7 @@ type Props = StackScreenProps<RootNavigationParamList, 'PickerView'>
 
 const PickerView: React.FC<Props> = (props) => {
 
-    const languages = ["English", "Español", "Catalan", "Français", "Italiano", "Português Brasil", "日本語"]
+    const languages = ["English", "Español", "Catalan", "Français", "Italiano", "Português Brasil", "日本語", "简体中文"]
     const currencies = [
         "USD",
         "AUD",

@@ -5,6 +5,7 @@ import fr from '../lang/fr'
 import it from '../lang/it'
 import ja from '../lang/ja'
 import pt_br from '../lang/pt_br'
+import zh from '../lang/zh'
 
 import Language from './langInterface'
 
@@ -24,6 +25,8 @@ export const getLanguageShortCode = (name : string) => {
             return "pt-br"
         case "Español":
             return "es"
+        case "简体中文":
+            return "zh"
         default:
             return "en"
     }
@@ -45,6 +48,8 @@ export const getTranslated = (lang : string) : Language  => {
             return ja
         case "pt-br":
             return pt_br
+        case "zh":
+            return zh
         default:
             return en
     }
@@ -66,6 +71,8 @@ export const getLanguageBigName = (name : string) => {
             return "Español"
         case "pt-br":
             return "Português Brasil"
+        case "zh":
+            return "简体中文"
         default:
             return "English"
     }

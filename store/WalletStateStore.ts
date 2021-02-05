@@ -376,6 +376,7 @@ export function walletReducer(state = initialState, action: WalletStateActionTyp
                 isActive: false,
                 isSyncing: false,
                 isRestoring: false,
+                newlyCreated: false,
                 transactions: [],
                 internalAddresses: [],
                 externalAddresses: [],
