@@ -39,7 +39,7 @@ var id = <Language> {
     receive: 'Terima',
     settings: 'Pengaturan',
     amount_to_send: 'Jumlah kirim',
-    not_enough_balance: 'Saldo tidak cukup untuk mengirim jumlah itu
+    not_enough_balance: 'Saldo tidak cukup untuk mengirim jumlah itu',
     send_max: 'Kirim seluruhnya',
     amount: 'Jumlah',
     miner_fee: 'Biaya Jaringan',
