@@ -132,7 +132,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.bitcoinwalletmobile"
+        applicationId "org.bitcoin.wallet"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
